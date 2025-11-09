@@ -40,9 +40,14 @@ def load_model(checkpoint_path: Path):
     return model, classes, device, tfms
 
 
-CHECKPOINT = Path(__file__).resolve().parents[1] / 'checkpoints' / 'best_cls_resnet18.pt'
+# Try multiple paths for the model checkpoint
+CHECKPOINT = Path(__file__).parent / 'model' / 'best_cls_resnet18.pt'
+if not CHECKPOINT.exists():
+    CHECKPOINT = Path(__file__).resolve().parents[1] / 'checkpoints' / 'best_cls_resnet18.pt'
 if not CHECKPOINT.exists():
     CHECKPOINT = Path.cwd() / 'checkpoints' / 'best_cls_resnet18.pt'
+if not CHECKPOINT.exists():
+    CHECKPOINT = Path.cwd() / 'model' / 'best_cls_resnet18.pt'
 
 model, classes, device, in_tfms = load_model(CHECKPOINT)
 id_to_label = {i: c for i, c in enumerate(classes)}

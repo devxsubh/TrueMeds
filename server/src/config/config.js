@@ -27,7 +27,9 @@ const envValidate = Joi.object()
 		EMAIL_FROM: Joi.string().allow('').empty(''),
 
 		FRONTEND_URL: Joi.string().allow('').empty('').default('http://localhost:777'),
-		IMAGE_URL: Joi.string().allow('').empty('').default('http://localhost:666/images')
+		IMAGE_URL: Joi.string().allow('').empty('').default('http://localhost:666/images'),
+
+		ML_SERVICE_URL: Joi.string().allow('').empty('').default('http://localhost:8000')
 	})
 	.unknown();
 
@@ -68,6 +70,8 @@ export default {
 	FRONTEND_URL: env.FRONTEND_URL,
 
 	IMAGE_URL: env.IMAGE_URL,
+
+	ML_SERVICE_URL: env.ML_SERVICE_URL,
 
 	TOKEN_TYPES: {
 		REFRESH: 'refresh',

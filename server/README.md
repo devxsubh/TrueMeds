@@ -98,6 +98,9 @@ FRONTEND_URL = # default http://localhost:777
 
 # URL images
 IMAGE_URL = # default http://localhost:666/images
+
+# ML Service URL
+ML_SERVICE_URL = # default http://localhost:8000
 ```
 
 ## Project Structure
@@ -149,6 +152,10 @@ List of available routes:
 
 **Image routes**:\
 `POST api/v1/images/upload` - Upload image
+
+**ML routes**:\
+`GET api/v1/ml/health` - Check ML service health\
+`POST api/v1/ml/classify` - Classify medicine image (authentic/counterfeit)
 
 ## License
 

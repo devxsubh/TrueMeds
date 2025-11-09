@@ -1,0 +1,61 @@
+# OS
+.DS_Store
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Packaging
+*.egg-info/
+build/
+dist/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_convert/
+
+# Logs / caches
+logs/
+*.log
+.cache/
+
+# Model artifacts
+checkpoints/
+runs/
+*.pt
+*.pth
+
+# Dataset - ignore entire data folder (too large)
+data/
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Client build
+client/dist/
+client/build/
+client/.vite/
+
+# Server uploads
+server/uploads/*
+!server/uploads/.gitkeep
+
+# ML service
+ml_service/__pycache__/
+ml_service/*.pyc
+ml_service/test_images/*
+
+# Misc
+tmp/
+.idea/
+.vscode/
+

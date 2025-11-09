@@ -1,0 +1,36 @@
+version: '3.9'
+
+services:
+  ml_service:
+    build:
+      context: ./ml_service
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./checkpoints:/app/checkpoints:ro
+    environment:
+      - PYTHONUNBUFFERED=1
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - ML_SERVICE_URL=http://ml_service:8000
+      - NODE_ENV=production
+    depends_on:
+      - ml_service
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_API_URL=http://localhost:5000
+    depends_on:
+      - server

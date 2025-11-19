@@ -69,12 +69,6 @@ This system uses **Transfer Learning** with a pre-trained ResNet-18 model to cla
 - **Error Handling**: Comprehensive error handling and validation
 - **Logging**: Structured logging for debugging and monitoring
 
-### Developer Experience
-- **Hot Reload**: Development servers with automatic reloading
-- **Type Safety**: Joi validation schemas for API requests
-- **Code Quality**: ESLint and Prettier for code formatting
-- **Documentation**: Comprehensive API documentation
-
 ## 📁 Project Structure
 
 ```
@@ -164,18 +158,6 @@ AiMl/
 - **npm or yarn** - Package manager
 - **MongoDB** - Database (or use MongoDB Atlas)
 - **Git** - Version control
-
-### Optional Software
-
-- **Docker & Docker Compose** - For containerized deployment
-- **Jupyter Notebook** - For model training and exploration
-- **CUDA-capable GPU** - For faster training (optional, CPU works)
-
-### System Requirements
-
-- **RAM**: Minimum 8GB (16GB recommended for training)
-- **Storage**: ~500MB for code + ~110MB for dataset
-- **Network**: Internet connection for downloading dependencies
 
 ## 🚀 Quick Start
 
@@ -674,12 +656,6 @@ docker compose logs -f
 docker compose down
 ```
 
-### Environment-Specific Configuration
-
-- **Development**: Use `.env` files with local URLs
-- **Staging**: Update environment variables for staging URLs
-- **Production**: Use secure environment variables, HTTPS, and production database
-
 ### Security Considerations
 
 - Use HTTPS in production
@@ -795,12 +771,6 @@ filename,width,height,class,xmin,ymin,xmax,ymax
 - `width`, `height`: Image dimensions
 - `class`: Label (authentic/counterfeit)
 - `xmin`, `ymin`, `xmax`, `ymax`: Bounding box coordinates
-
-### Dataset Notes
-
-- Dataset is gitignored (too large for repository)
-- Download dataset separately if needed
-- See `data/README.dataset.txt` for more information
 
 ## 📄 License
 

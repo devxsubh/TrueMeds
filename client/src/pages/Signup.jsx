@@ -42,7 +42,6 @@ const Signup = () => {
 
     const { confirmPassword, ...signupData } = formData;
     const result = await signup(signupData);
-    console.log(result);
     setLoading(false);
 
     if (result.success) {

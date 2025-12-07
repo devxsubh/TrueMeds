@@ -10,6 +10,9 @@ import Role from '~/models/roleModel';
 export const signup = async (req, res) => {
 	const role = await Role.getRoleByName('User');
 	req.body.roles = [role.id];
+	// Set default empty strings for firstName and lastName since they're not required during signup
+	req.body.firstName = req.body.firstName || '';
+	req.body.lastName = req.body.lastName || '';
 	const user = await User.createUser(req.body);
 	const tokens = await tokenService.generateAuthTokens(user);
 	return res.json({

@@ -37,6 +37,12 @@ export const getUsers = async (req, res) => {
 						$regex: filters.q,
 						$options: 'i'
 					}
+				},
+				{
+					email: {
+						$regex: filters.q,
+						$options: 'i'
+					}
 				}
 			]
 		}

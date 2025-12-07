@@ -101,6 +101,9 @@ IMAGE_URL = # default http://localhost:666/images
 
 # ML Service URL
 ML_SERVICE_URL = # default http://localhost:8000
+
+# Gemini API Key (for AI chat functionality)
+GEMINI_API_KEY = # Your Google Gemini API key
 ```
 
 ## Project Structure
@@ -156,6 +159,12 @@ List of available routes:
 **ML routes**:\
 `GET api/v1/ml/health` - Check ML service health\
 `POST api/v1/ml/classify` - Classify medicine image (authentic/counterfeit)
+
+**RAG routes** (AI Chat with Gemini Vision):\
+`POST api/v1/rag/upload-image` - Upload image and get imageId for chat\
+`POST api/v1/rag/chat` - Chat with Gemini Vision about uploaded image\
+`POST api/v1/rag/process-image` - Legacy endpoint (redirects to upload-image)\
+`POST api/v1/rag/chat-legacy` - Legacy endpoint (redirects to chat)
 
 ## License
 

@@ -29,7 +29,10 @@ const envValidate = Joi.object()
 		FRONTEND_URL: Joi.string().allow('').empty('').default('http://localhost:777'),
 		IMAGE_URL: Joi.string().allow('').empty('').default('http://localhost:666/images'),
 
-		ML_SERVICE_URL: Joi.string().allow('').empty('').default('http://localhost:8000')
+		ML_SERVICE_URL: Joi.string().allow('').empty('').default('http://localhost:8000'),
+
+		OPENAI_API_KEY: Joi.string().allow('').empty(''),
+		GEMINI_API_KEY: Joi.string().allow('').empty('') // Kept for backward compatibility
 	})
 	.unknown();
 
@@ -72,6 +75,9 @@ export default {
 	IMAGE_URL: env.IMAGE_URL,
 
 	ML_SERVICE_URL: env.ML_SERVICE_URL,
+
+	OPENAI_API_KEY: env.OPENAI_API_KEY,
+	GEMINI_API_KEY: env.GEMINI_API_KEY, // Kept for backward compatibility
 
 	TOKEN_TYPES: {
 		REFRESH: 'refresh',

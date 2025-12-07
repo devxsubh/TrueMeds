@@ -37,6 +37,7 @@ const connect = async () => {
 		logger.info('🚀 Connected to MongoDB end!');
 		await initialData();
 		logger.info('🚀 Initial MongoDB!');
+		
 		server = app.listen(config.PORT, config.HOST, () => {
 			logger.info(`🚀 Host: http://${config.HOST}:${config.PORT}`);
 			logger.info('██████╗░░░██╗██╗███████╗');

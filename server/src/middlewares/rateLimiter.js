@@ -5,6 +5,8 @@ import APIError from '~/utils/apiError';
 const rateLimiter = rateLimit({
 	windowMs: 15 * 60 * 1000, // 15 minutes
 	max: 100,
+	// Skip rate limiting for OPTIONS requests (CORS preflight)
+	skip: (req) => req.method === 'OPTIONS',
 	handler: (req, res, next) => {
 		next(new APIError('Too many requests, please try again later.', httpStatus.TOO_MANY_REQUESTS));
 	}

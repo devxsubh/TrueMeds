@@ -15,11 +15,22 @@ if (config.NODE_ENV !== 'test') {
 	app.use(morgan);
 }
 
-app.use(helmet());
+// CORS - Allow all origins (for development)
+app.use(cors({
+	origin: true, // Allow all origins (returns the origin in Access-Control-Allow-Origin)
+	credentials: true, // Allow credentials (cookies, authorization headers)
+	methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+	allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
+	exposedHeaders: ['Authorization']
+}));
+
+app.use(helmet({
+	// Adjust helmet for CORS
+	crossOriginResourcePolicy: { policy: "cross-origin" }
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(compression());
-app.use(cors());
 app.use(rateLimiter);
 app.use(passport.initialize());
 app.use(express.static('public'));

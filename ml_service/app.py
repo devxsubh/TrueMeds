@@ -8,6 +8,10 @@ from torchvision import models, transforms
 from torch import nn
 from pathlib import Path
 import sys
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 sys.path.append(str(Path(__file__).parent))
 
@@ -16,6 +20,8 @@ class Prediction(BaseModel):
     label: str
     confidence: float
     probabilities: dict
+
+
 
 
 def load_model(checkpoint_path: Path):
@@ -54,39 +60,63 @@ id_to_label = {i: c for i, c in enumerate(classes)}
 
 app = FastAPI(title='Counterfeit Medicine ML API')
 app.add_middleware(
-    CORSMiddleware,
-    allow_origins=['*'],
-    allow_methods=['*'],
-    allow_headers=['*'],
+	CORSMiddleware,
+	allow_origins=['*'],
+	allow_methods=['*'],
+	allow_headers=['*'],
 )
+
+
+@app.get('/')
+def root():
+	"""Root endpoint with API information"""
+	return {
+		'service': 'Counterfeit Medicine ML API',
+		'version': '2.1.0',
+		'status': 'running',
+		'endpoints': {
+			'health': '/health',
+			'classify': '/classify',
+			'docs': '/docs',
+			'redoc': '/redoc'
+		},
+		'classes': classes
+	}
 
 
 @app.get('/health')
 def health():
-    return {'ok': True, 'classes': classes, 'checkpoint': str(CHECKPOINT)}
+	return {
+		'ok': True, 
+		'classes': classes, 
+		'checkpoint': str(CHECKPOINT)
+	}
 
 
+
+
+# Keep old endpoints for backward compatibility (can be removed later)
 @app.post('/classify', response_model=Prediction)
 async def classify(file: UploadFile = File(...)):
-    try:
-        data = await file.read()
-        img = Image.open(io.BytesIO(data)).convert('RGB')
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=f'Invalid image: {e}')
+	"""Legacy endpoint - use /upload-image instead"""
+	try:
+		data = await file.read()
+		img = Image.open(io.BytesIO(data)).convert('RGB')
+	except Exception as e:
+		raise HTTPException(status_code=400, detail=f'Invalid image: {e}')
 
-    with torch.no_grad():
-        x = in_tfms(img).unsqueeze(0).to(device)
-        logits = model(x)
-        probs = torch.softmax(logits, dim=1)[0]
-        conf, pred_idx = torch.max(probs, dim=0)
-        label = id_to_label[int(pred_idx.item())]
-        conf_val = float(conf.item())
-        prob_map = {id_to_label[i]: float(probs[i].item()) for i in range(len(classes))}
+	with torch.no_grad():
+		x = in_tfms(img).unsqueeze(0).to(device)
+		logits = model(x)
+		probs = torch.softmax(logits, dim=1)[0]
+		conf, pred_idx = torch.max(probs, dim=0)
+		label = id_to_label[int(pred_idx.item())]
+		conf_val = float(conf.item())
+		prob_map = {id_to_label[i]: float(probs[i].item()) for i in range(len(classes))}
 
-    return Prediction(label=label, confidence=conf_val, probabilities=prob_map)
+	return Prediction(label=label, confidence=conf_val, probabilities=prob_map)
 
 
 if __name__ == '__main__':
-    import uvicorn
-    uvicorn.run(app, host='0.0.0.0', port=8000)
-
+	import uvicorn
+	uvicorn.run(app, host='0.0.0.0', port=8000)

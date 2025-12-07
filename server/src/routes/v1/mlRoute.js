@@ -9,8 +9,9 @@ const router = Router();
 // Health check endpoint (no auth required)
 router.get('/health', catchAsync(mlController.checkHealth));
 
-// Classify image endpoint (requires authentication)
-router.post('/classify', authenticate(), uploadImageMemory, catchAsync(mlController.classifyImage));
+// Classify image endpoint (auth optional - can be enabled by uncommenting authenticate())
+router.post('/classify', uploadImageMemory, catchAsync(mlController.classifyImage));
+// To enable authentication, use: router.post('/classify', authenticate(), uploadImageMemory, catchAsync(mlController.classifyImage));
 
 export default router;
 

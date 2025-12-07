@@ -1,0 +1,856 @@
+{
+	"info": {
+		"_postman_id": "aiml-api-collection",
+		"name": "AiMl Counterfeit Medicine Detection API",
+		"description": "Complete API collection for Counterfeit Medicine Detection System",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Sign Up",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.data && jsonData.data.tokens) {",
+									"        pm.environment.set(\"access_token\", jsonData.data.tokens.access.token);",
+									"        pm.environment.set(\"refresh_token\", jsonData.data.tokens.refresh.token);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"userName\": \"johndoe123\",\n  \"email\": \"user@example.com\",\n  \"password\": \"SecurePassword123!\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/signup",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "auth", "signup"]
+						},
+						"description": "Register a new user. Requires firstName, lastName, userName (alphanumeric, 6-66 chars), email, and password (min 6 chars)."
+					},
+					"response": []
+				},
+				{
+					"name": "Sign In",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.data && jsonData.data.tokens) {",
+									"        pm.environment.set(\"access_token\", jsonData.data.tokens.access.token);",
+									"        pm.environment.set(\"refresh_token\", jsonData.data.tokens.refresh.token);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userName\": \"johndoe123\",\n  \"password\": \"SecurePassword123!\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/signin",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "auth", "signin"]
+						},
+						"description": "Sign in with userName and password. Returns access and refresh tokens."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Current User",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/current",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "auth", "current"]
+						},
+						"description": "Get current user basic info (firstName, lastName, userName, avatarUrl). Requires authentication."
+					},
+					"response": []
+				},
+				{
+					"name": "Get My Profile",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/me",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "auth", "me"]
+						},
+						"description": "Get current user profile with roles. Requires authentication."
+					},
+					"response": []
+				},
+				{
+					"name": "Update My Profile",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstName\": \"Updated First Name\",\n  \"lastName\": \"Updated Last Name\",\n  \"userName\": \"updatedusername\",\n  \"email\": \"newemail@example.com\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/me",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "auth", "me"]
+						},
+						"description": "Update current user profile. All fields are optional: firstName, lastName, userName, email, password, avatar."
+					},
+					"response": []
+				},
+				{
+					"name": "Sign Out",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"refreshToken\": \"{{refresh_token}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/signout",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "auth", "signout"]
+						},
+						"description": "Sign out and revoke refresh token."
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh Tokens",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.data && jsonData.data.tokens) {",
+									"        pm.environment.set(\"access_token\", jsonData.data.tokens.access.token);",
+									"        pm.environment.set(\"refresh_token\", jsonData.data.tokens.refresh.token);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"refreshToken\": \"{{refresh_token}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/refresh-tokens",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "auth", "refresh-tokens"]
+						},
+						"description": "Refresh access token using refresh token."
+					},
+					"response": []
+				},
+				{
+					"name": "Send Verification Email",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/send-verification-email",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "auth", "send-verification-email"]
+						},
+						"description": "Send verification email to current user. Requires authentication."
+					},
+					"response": []
+				},
+				{
+					"name": "Verify Email",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/verify-email?token=verification_token_here",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "auth", "verify-email"],
+							"query": [
+								{
+									"key": "token",
+									"value": "verification_token_here",
+									"description": "Email verification token"
+								}
+							]
+						},
+						"description": "Verify email using token from verification email. Token is passed as query parameter."
+					},
+					"response": []
+				},
+				{
+					"name": "Forgot Password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"user@example.com\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/forgot-password",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "auth", "forgot-password"]
+						},
+						"description": "Request password reset email."
+					},
+					"response": []
+				},
+				{
+					"name": "Reset Password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"password\": \"NewSecurePassword123!\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/reset-password?token=reset_token_here",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "auth", "reset-password"],
+							"query": [
+								{
+									"key": "token",
+									"value": "reset_token_here",
+									"description": "Password reset token from email"
+								}
+							]
+						},
+						"description": "Reset password using token from email. Token is passed as query parameter, password in body."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ML Service",
+			"item": [
+				{
+					"name": "ML Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/ml/health",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "ml", "health"]
+						},
+						"description": "Check if ML service is running and healthy"
+					},
+					"response": []
+				},
+				{
+					"name": "Classify Medicine Image",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "Optional - currently not required but can be enabled"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": [],
+									"description": "Medicine image file (JPG, PNG, etc.)"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/ml/classify",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "ml", "classify"]
+						},
+						"description": "Classify a medicine image as authentic or counterfeit"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Get All Users",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/users?page=1&limit=10&sortBy=createdAt&sortDirection=desc&q=",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "users"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number"
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"description": "Items per page"
+								},
+								{
+									"key": "sortBy",
+									"value": "createdAt",
+									"description": "Field to sort by"
+								},
+								{
+									"key": "sortDirection",
+									"value": "desc",
+									"description": "Sort direction (asc/desc)"
+								},
+								{
+									"key": "q",
+									"value": "",
+									"description": "Search query",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Get all users with pagination and filtering. Requires 'user:read' permission."
+					},
+					"response": []
+				},
+				{
+					"name": "Create User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstName\": \"New\",\n  \"lastName\": \"User\",\n  \"userName\": \"newuser123\",\n  \"email\": \"newuser@example.com\",\n  \"password\": \"SecurePassword123!\",\n  \"roles\": [\"role_id_here\"],\n  \"avatar\": \"https://example.com/avatar.jpg\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/users",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "users"]
+						},
+						"description": "Create a new user. Requires 'user:create' permission. Roles must be array of MongoDB ObjectIds."
+					},
+					"response": []
+				},
+				{
+					"name": "Get User by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/:userId",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "users", ":userId"],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "user_id_here",
+									"description": "MongoDB ObjectId"
+								}
+							]
+						},
+						"description": "Get user by ID. Requires 'user:read' permission."
+					},
+					"response": []
+				},
+				{
+					"name": "Update User",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstName\": \"Updated First Name\",\n  \"lastName\": \"Updated Last Name\",\n  \"userName\": \"updatedusername\",\n  \"email\": \"updated@example.com\",\n  \"roles\": [\"role_id_here\"]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/:userId",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "users", ":userId"],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "user_id_here",
+									"description": "MongoDB ObjectId"
+								}
+							]
+						},
+						"description": "Update user. Requires 'user:update' permission. All fields are optional."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/:userId",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "users", ":userId"],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "user_id_here",
+									"description": "MongoDB ObjectId"
+								}
+							]
+						},
+						"description": "Delete user. Requires 'user:delete' permission."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Roles",
+			"item": [
+				{
+					"name": "Get All Roles",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/roles?page=1&limit=10&sortBy=name&sortDirection=asc&q=",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "roles"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number"
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"description": "Items per page"
+								},
+								{
+									"key": "sortBy",
+									"value": "name",
+									"description": "Field to sort by"
+								},
+								{
+									"key": "sortDirection",
+									"value": "asc",
+									"description": "Sort direction (asc/desc)"
+								},
+								{
+									"key": "q",
+									"value": "",
+									"description": "Search query",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Get all roles with pagination. Requires 'role:read' permission."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Role",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"moderator\",\n  \"description\": \"Moderator role with limited permissions\",\n  \"permissions\": [\"permission_id_1\", \"permission_id_2\"]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/roles",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "roles"]
+						},
+						"description": "Create a new role. Requires 'role:create' permission. Permissions must be array of MongoDB ObjectIds."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Role by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/roles/:roleId",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "roles", ":roleId"],
+							"variable": [
+								{
+									"key": "roleId",
+									"value": "role_id_here",
+									"description": "MongoDB ObjectId"
+								}
+							]
+						},
+						"description": "Get role by ID. Requires 'role:read' permission."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Role",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"updated_role\",\n  \"description\": \"Updated role description\",\n  \"permissions\": [\"permission_id_1\", \"permission_id_2\", \"permission_id_3\"]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/roles/:roleId",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "roles", ":roleId"],
+							"variable": [
+								{
+									"key": "roleId",
+									"value": "role_id_here",
+									"description": "MongoDB ObjectId"
+								}
+							]
+						},
+						"description": "Update role. Requires 'role:update' permission. All fields are optional."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Role",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/roles/:roleId",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "roles", ":roleId"],
+							"variable": [
+								{
+									"key": "roleId",
+									"value": "role_id_here",
+									"description": "MongoDB ObjectId"
+								}
+							]
+						},
+						"description": "Delete role. Requires 'role:delete' permission."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Images",
+			"item": [
+				{
+					"name": "Upload Image",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "image",
+									"type": "file",
+									"src": [],
+									"description": "Image file to upload (JPG, PNG, GIF, JPEG)"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/images/upload",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "images", "upload"]
+						},
+						"description": "Upload an image (saves to disk and returns filename). Requires authentication."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "RAG (Medicine Chat)",
+			"item": [
+				{
+					"name": "Process Medicine Image",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.data && jsonData.sessionId) {",
+									"        pm.environment.set(\"session_id\", jsonData.sessionId);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": [],
+									"description": "Medicine image file (JPG, PNG, etc.)"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/rag/process-image",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "rag", "process-image"]
+						},
+						"description": "Upload medicine image, classify it, extract text via OCR, and store context for chat. Requires authentication."
+					},
+					"response": []
+				},
+				{
+					"name": "Chat About Medicine",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"question\": \"What does this medicine do? What are its uses and side effects?\",\n  \"sessionId\": \"{{session_id}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/rag/chat",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "rag", "chat"]
+						},
+						"description": "Ask questions about the medicine using RAG with Gemini AI. Requires authentication and sessionId from process-image."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Medicine Context",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/rag/context/:sessionId",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "rag", "context", ":sessionId"],
+							"variable": [
+								{
+									"key": "sessionId",
+									"value": "{{session_id}}"
+								}
+							]
+						},
+						"description": "Get stored context (classification + OCR) for a session. Requires authentication."
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:5000",
+			"type": "string"
+		},
+		{
+			"key": "access_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "refresh_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "session_id",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

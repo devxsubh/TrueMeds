@@ -54,6 +54,14 @@ ml_service/__pycache__/
 ml_service/*.pyc
 ml_service/test_images/*
 
+# Environment variables (NEVER commit these!)
+.env
+.env.local
+.env.*.local
+server/.env
+client/.env
+ml_service/.env
+
 # Misc
 tmp/
 .idea/

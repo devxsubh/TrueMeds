@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import '@/styles/Navbar.css';
 
 const Navbar = () => {
   const { isAuthenticated, user, logout } = useAuth();
@@ -14,40 +13,63 @@ const Navbar = () => {
     router.push('/login');
   };
 
+  const displayName = user?.first_name || user?.username || 'Account';
+
   return (
-    <nav className="navbar">
-      <div className="navbar-content">
-        <Link href="/" className="navbar-brand">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M9 11l3 3L22 4"></path>
-            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
-          </svg>
-          Medicine Detector
+    <header className="sticky top-0 z-40 border-b border-[var(--line)]/80 bg-[rgba(244,247,246,0.85)] backdrop-blur-md">
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
+        <Link href="/" className="group flex items-baseline gap-2 no-underline">
+          <span className="font-display text-2xl font-semibold tracking-tight text-[var(--teal-deep)] transition-colors group-hover:text-[var(--teal)]">
+            TrueMeds
+          </span>
+          <span className="hidden text-xs uppercase tracking-[0.18em] text-[var(--muted)] sm:inline">
+            Lab
+          </span>
         </Link>
 
-        <div className="navbar-links">
+        <nav className="flex items-center gap-1 sm:gap-3">
           {isAuthenticated ? (
             <>
-              <Link href="/" className="nav-link">Home</Link>
-              <Link href="/profile" className="nav-link">Profile</Link>
-              <div className="user-menu">
-                <span className="user-name">{user?.firstName || user?.userName || 'User'}</span>
-                <button onClick={handleLogout} className="logout-button">
-                  Logout
-                </button>
-              </div>
+              <Link
+                href="/"
+                className="rounded-md px-3 py-2 text-sm text-[var(--slate)] no-underline transition hover:bg-white/70"
+              >
+                Analyze
+              </Link>
+              <Link
+                href="/profile"
+                className="rounded-md px-3 py-2 text-sm text-[var(--slate)] no-underline transition hover:bg-white/70"
+              >
+                {displayName}
+              </Link>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="ml-1 rounded-md border border-[var(--line)] bg-white px-3 py-2 text-sm text-[var(--ink)] transition hover:border-[var(--teal)] hover:text-[var(--teal)]"
+              >
+                Sign out
+              </button>
             </>
           ) : (
             <>
-              <Link href="/login" className="nav-link">Login</Link>
-              <Link href="/signup" className="nav-link nav-link-primary">Sign Up</Link>
+              <Link
+                href="/login"
+                className="rounded-md px-3 py-2 text-sm text-[var(--slate)] no-underline transition hover:bg-white/70"
+              >
+                Sign in
+              </Link>
+              <Link
+                href="/signup"
+                className="rounded-md bg-[var(--teal)] px-3 py-2 text-sm text-white no-underline transition hover:bg-[var(--teal-deep)]"
+              >
+                Create account
+              </Link>
             </>
           )}
-        </div>
+        </nav>
       </div>
-    </nav>
+    </header>
   );
 };
 
 export default Navbar;
-

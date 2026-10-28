@@ -11,9 +11,7 @@ export default function ClientWrapper({ children }) {
   return (
     <AuthProvider>
       {!isAuthPage && <Navbar />}
-      <div className={isAuthPage ? '' : 'App'}>
-        {children}
-      </div>
+      <div className={isAuthPage ? 'min-h-screen' : 'min-h-[calc(100vh-4rem)]'}>{children}</div>
     </AuthProvider>
   );
 }

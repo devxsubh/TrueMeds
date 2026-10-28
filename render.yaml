@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: truemeds-api
+    runtime: docker
+    rootDir: api
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CORS_ORIGINS
+        sync: false
+      - key: DATABASE_URL
+        fromDatabase:
+          name: truemeds-db
+          property: connectionString
+
+databases:
+  - name: truemeds-db
+    plan: free

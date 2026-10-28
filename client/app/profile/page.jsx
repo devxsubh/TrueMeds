@@ -1,265 +1,154 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { userAPI } from '@/services/api';
+import { userAPI, errorMessage } from '@/services/api';
 import ProtectedRoute from '@/components/ProtectedRoute';
-import '@/styles/Profile.css';
 
 export default function ProfilePage() {
-  const { user: authUser, updateUser } = useAuth();
+  const { updateUser } = useAuth();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
+    first_name: '',
+    last_name: '',
     email: '',
-    userName: ''
   });
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
 
   useEffect(() => {
-    fetchProfile();
+    (async () => {
+      try {
+        const data = await userAPI.getProfile();
+        setUser(data);
+        setFormData({
+          first_name: data.first_name || '',
+          last_name: data.last_name || '',
+          email: data.email || '',
+        });
+      } catch (err) {
+        setError(errorMessage(err));
+      } finally {
+        setLoading(false);
+      }
+    })();
   }, []);
-
-  const fetchProfile = async () => {
-    try {
-      setLoading(true);
-      const response = await userAPI.getProfile();
-      // Handle different response structures
-      const userData = response.data?.user || response.data || response;
-      setUser(userData);
-      setFormData({
-        firstName: userData.firstName || '',
-        lastName: userData.lastName || '',
-        email: userData.email || '',
-        userName: userData.userName || ''
-      });
-    } catch (err) {
-      setError('Failed to load profile. Please try again.');
-      console.error('Profile fetch error:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(null);
+    setSuccess(null);
     try {
-      setError(null);
-      setSuccess(null);
-      const response = await userAPI.updateProfile(formData);
-      // Handle different response structures
-      const updatedUser = response.data?.user || response.data || response;
-      setUser(updatedUser);
-      updateUser(updatedUser);
+      const updated = await userAPI.updateProfile({
+        first_name: formData.first_name || null,
+        last_name: formData.last_name || null,
+        email: formData.email,
+      });
+      setUser(updated);
+      updateUser(updated);
       setEditing(false);
-      setSuccess('Profile updated successfully!');
-      setTimeout(() => setSuccess(null), 3000);
+      setSuccess('Profile updated');
+      setTimeout(() => setSuccess(null), 2500);
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to update profile. Please try again.');
+      setError(errorMessage(err));
     }
   };
 
-  const handleCancel = () => {
-    setFormData({
-      firstName: user?.firstName || '',
-      lastName: user?.lastName || '',
-      email: user?.email || '',
-      userName: user?.userName || ''
-    });
-    setEditing(false);
-    setError(null);
-  };
-
-  if (loading) {
-    return (
-      <ProtectedRoute>
-        <div className="profile-container">
-          <div className="profile-loading">
-            <div className="spinner"></div>
-            <p>Loading profile...</p>
-          </div>
-        </div>
-      </ProtectedRoute>
-    );
-  }
-
   return (
     <ProtectedRoute>
-      <div className="profile-container">
-        <div className="profile-header">
-          <h1>My Profile</h1>
-          <p className="profile-subtitle">Manage your account information</p>
-        </div>
+      <main className="mx-auto max-w-xl px-4 py-10 sm:px-6 sm:py-14">
+        <h1 className="font-display text-3xl text-[var(--ink)]">Profile</h1>
+        <p className="mt-2 text-sm text-[var(--muted)]">Account details for TrueMeds.</p>
 
-        <div className="profile-content">
-          <div className="profile-card">
-            <div className="profile-card-header">
-              <h2>Personal Information</h2>
-              {!editing && (
-                <button className="edit-btn" onClick={() => setEditing(true)}>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                  </svg>
-                  Edit Profile
-                </button>
-              )}
-            </div>
-
+        {loading ? (
+          <p className="mt-10 text-[var(--muted)]">Loading…</p>
+        ) : (
+          <div className="mt-8 rounded-2xl border border-[var(--line)] bg-white p-6">
             {error && (
-              <div className="profile-error">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <line x1="12" y1="8" x2="12" y2="12"></line>
-                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                </svg>
-                <span>{error}</span>
+              <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
+                {error}
               </div>
             )}
-
             {success && (
-              <div className="profile-success">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                  <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                </svg>
-                <span>{success}</span>
+              <div className="mb-4 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
+                {success}
               </div>
             )}
 
             {editing ? (
-              <form className="profile-form" onSubmit={handleSubmit}>
-                <div className="form-group">
-                  <label htmlFor="firstName">First Name</label>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                  <label className="mb-1 block text-sm text-[var(--slate)]">First name</label>
                   <input
-                    type="text"
-                    id="firstName"
-                    name="firstName"
-                    value={formData.firstName}
-                    onChange={handleInputChange}
-                    placeholder="Enter your first name"
+                    value={formData.first_name}
+                    onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
+                    className="w-full rounded-lg border border-[var(--line)] px-3 py-2 outline-none focus:border-[var(--teal)]"
                   />
                 </div>
-
-                <div className="form-group">
-                  <label htmlFor="lastName">Last Name</label>
+                <div>
+                  <label className="mb-1 block text-sm text-[var(--slate)]">Last name</label>
                   <input
-                    type="text"
-                    id="lastName"
-                    name="lastName"
-                    value={formData.lastName}
-                    onChange={handleInputChange}
-                    placeholder="Enter your last name"
+                    value={formData.last_name}
+                    onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
+                    className="w-full rounded-lg border border-[var(--line)] px-3 py-2 outline-none focus:border-[var(--teal)]"
                   />
                 </div>
-
-                <div className="form-group">
-                  <label htmlFor="userName">Username</label>
-                  <input
-                    type="text"
-                    id="userName"
-                    name="userName"
-                    value={formData.userName}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="email">Email</label>
+                <div>
+                  <label className="mb-1 block text-sm text-[var(--slate)]">Email</label>
                   <input
                     type="email"
-                    id="email"
-                    name="email"
                     value={formData.email}
-                    onChange={handleInputChange}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     required
-                    disabled
+                    className="w-full rounded-lg border border-[var(--line)] px-3 py-2 outline-none focus:border-[var(--teal)]"
                   />
-                  <small className="form-hint">Email cannot be changed</small>
                 </div>
-
-                <div className="form-actions">
-                  <button type="button" className="cancel-btn" onClick={handleCancel}>
+                <div className="flex gap-2 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setEditing(false)}
+                    className="rounded-lg border border-[var(--line)] px-4 py-2 text-sm"
+                  >
                     Cancel
                   </button>
-                  <button type="submit" className="save-btn">
-                    Save Changes
+                  <button
+                    type="submit"
+                    className="rounded-lg bg-[var(--teal)] px-4 py-2 text-sm text-white"
+                  >
+                    Save
                   </button>
                 </div>
               </form>
             ) : (
-              <div className="profile-info">
-                <div className="info-item">
-                  <span className="info-label">First Name</span>
-                  <span className="info-value">{user?.firstName || 'Not set'}</span>
+              <div className="space-y-4 text-sm">
+                <div>
+                  <p className="text-[var(--muted)]">Username</p>
+                  <p className="mt-0.5 font-medium">{user?.username}</p>
                 </div>
-                <div className="info-item">
-                  <span className="info-label">Last Name</span>
-                  <span className="info-value">{user?.lastName || 'Not set'}</span>
+                <div>
+                  <p className="text-[var(--muted)]">Name</p>
+                  <p className="mt-0.5 font-medium">
+                    {[user?.first_name, user?.last_name].filter(Boolean).join(' ') || '—'}
+                  </p>
                 </div>
-                <div className="info-item">
-                  <span className="info-label">Username</span>
-                  <span className="info-value">{user?.userName || 'Not set'}</span>
+                <div>
+                  <p className="text-[var(--muted)]">Email</p>
+                  <p className="mt-0.5 font-medium">{user?.email}</p>
                 </div>
-                <div className="info-item">
-                  <span className="info-label">Email</span>
-                  <span className="info-value">{user?.email || 'Not set'}</span>
-                </div>
-                <div className="info-item">
-                  <span className="info-label">Role</span>
-                  <span className="info-value role-badge">{user?.role?.name || 'User'}</span>
-                </div>
+                <button
+                  type="button"
+                  onClick={() => setEditing(true)}
+                  className="mt-2 rounded-lg bg-[var(--slate)] px-4 py-2 text-sm text-white"
+                >
+                  Edit profile
+                </button>
               </div>
             )}
           </div>
-
-          <div className="profile-card">
-            <div className="profile-card-header">
-              <h2>Account Statistics</h2>
-            </div>
-            <div className="stats-grid">
-              <div className="stat-item">
-                <div className="stat-icon">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M9 11l3 3L22 4"></path>
-                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
-                  </svg>
-                </div>
-                <div className="stat-content">
-                  <span className="stat-label">Member Since</span>
-                  <span className="stat-value">
-                    {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
-                  </span>
-                </div>
-              </div>
-              <div className="stat-item">
-                <div className="stat-icon">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                  </svg>
-                </div>
-                <div className="stat-content">
-                  <span className="stat-label">Account Status</span>
-                  <span className="stat-value status-active">Active</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+        )}
+      </main>
     </ProtectedRoute>
   );
 }

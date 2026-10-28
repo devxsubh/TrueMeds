@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect } from 'react';
-import { authAPI, userAPI } from '@/services/api';
+import { authAPI, userAPI, errorMessage } from '@/services/api';
 
 const AuthContext = createContext(null);
 
@@ -26,13 +26,10 @@ export const AuthProvider = ({ children }) => {
     const token = localStorage.getItem('accessToken');
     if (token) {
       try {
-        const response = await userAPI.getProfile();
-        // Handle different response structures: { success: true, data: { user } } or { data: user } or { user }
-        const userData = response.data?.user || response.data || response;
+        const userData = await userAPI.getProfile();
         setUser(userData);
         setIsAuthenticated(true);
-      } catch (error) {
-        // Token invalid, clear storage
+      } catch {
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
         setIsAuthenticated(false);
@@ -42,39 +39,25 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   };
 
-  const login = async (userName, password) => {
+  const login = async (username, password) => {
     try {
-      const response = await authAPI.signin({ userName, password });
-      // authAPI.signin returns response.data which is { success: true, data: { user, tokens } }
-      // So user is at response.data.user
-      if (response.data && response.data.user) {
-        setUser(response.data.user);
-        setIsAuthenticated(true);
-      }
+      const response = await authAPI.signin({ username, password });
+      setUser(response.user);
+      setIsAuthenticated(true);
       return { success: true, data: response };
     } catch (error) {
-      return {
-        success: false,
-        error: error.response?.data?.message || error.message || 'Login failed',
-      };
+      return { success: false, error: errorMessage(error) };
     }
   };
 
   const signup = async (data) => {
     try {
       const response = await authAPI.signup(data);
-      // authAPI.signup returns response.data which is { success: true, data: { user, tokens } }
-      // So user is at response.data.user
-      if (response.data && response.data.user) {
-        setUser(response.data.user);
-        setIsAuthenticated(true);
-      }
+      setUser(response.user);
+      setIsAuthenticated(true);
       return { success: true, data: response };
     } catch (error) {
-      return {
-        success: false,
-        error: error.response?.data?.message || error.message || 'Signup failed',
-      };
+      return { success: false, error: errorMessage(error) };
     }
   };
 
@@ -88,16 +71,20 @@ export const AuthProvider = ({ children }) => {
     setUser((prev) => ({ ...prev, ...userData }));
   };
 
-  const value = {
-    user,
-    isAuthenticated,
-    loading,
-    login,
-    signup,
-    logout,
-    updateUser,
-    checkAuth,
-  };
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        isAuthenticated,
+        loading,
+        login,
+        signup,
+        logout,
+        updateUser,
+        checkAuth,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
 };

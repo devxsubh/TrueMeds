@@ -1,18 +1,30 @@
+import { DM_Sans, Fraunces } from 'next/font/google';
 import ClientWrapper from '@/components/ClientWrapper';
 import '@/styles/globals.css';
 
+const sans = DM_Sans({
+  subsets: ['latin'],
+  variable: '--font-sans',
+  display: 'swap',
+});
+
+const display = Fraunces({
+  subsets: ['latin'],
+  variable: '--font-display',
+  display: 'swap',
+});
+
 export const metadata = {
-  title: 'Counterfeit Medicine Detector',
-  description: 'AI-powered medicine authenticity detection system',
+  title: 'TrueMeds — Composition & Authenticity Analysis',
+  description:
+    'Upload medicine packaging to analyze authenticity signals, chemical composition, and alternatives.',
 };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${sans.variable} ${display.variable}`}>
       <body>
-        <ClientWrapper>
-          {children}
-        </ClientWrapper>
+        <ClientWrapper>{children}</ClientWrapper>
       </body>
     </html>
   );

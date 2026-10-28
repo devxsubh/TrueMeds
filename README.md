@@ -47,7 +47,7 @@ cp .env.example .env.local  # NEXT_PUBLIC_API_URL=http://localhost:8000
 npm run dev
 ```
 
-App: [http://localhost:3000](http://localhost:3000)
+App: [http://localhost:3000](http://localhost:3000) (landing) · lab at `/lab` after sign-in
 
 Or from the repo root: `./start-all.sh`
 

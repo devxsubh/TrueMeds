@@ -10,14 +10,14 @@ const ProtectedRoute = ({ children }) => {
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {
-      router.push('/login');
+      router.replace('/login');
     }
   }, [isAuthenticated, loading, router]);
 
   if (loading) {
     return (
-      <div className="flex min-h-[60vh] items-center justify-center text-[var(--muted)]">
-        Loading…
+      <div className="flex min-h-[60vh] items-center justify-center ambient-lab text-[var(--muted)]">
+        <span className="animate-pulse-soft">Loading lab…</span>
       </div>
     );
   }

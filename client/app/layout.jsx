@@ -15,9 +15,9 @@ const display = Fraunces({
 });
 
 export const metadata = {
-  title: 'TrueMeds — Composition & Authenticity Analysis',
+  title: 'TrueMeds — AI packaging lab',
   description:
-    'Upload medicine packaging to analyze authenticity signals, chemical composition, and alternatives.',
+    'Chat-native medicine packaging intelligence: authenticity, chemical composition, and alternatives.',
 };
 
 export default function RootLayout({ children }) {

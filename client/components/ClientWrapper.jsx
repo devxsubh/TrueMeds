@@ -6,12 +6,13 @@ import { usePathname } from 'next/navigation';
 
 export default function ClientWrapper({ children }) {
   const pathname = usePathname();
-  const isAuthPage = pathname === '/login' || pathname === '/signup';
+  const hideNavbar =
+    pathname === '/login' || pathname === '/signup' || pathname === '/';
 
   return (
     <AuthProvider>
-      {!isAuthPage && <Navbar />}
-      <div className={isAuthPage ? 'min-h-screen' : 'min-h-[calc(100vh-4rem)]'}>{children}</div>
+      {!hideNavbar && <Navbar />}
+      <div className={hideNavbar ? 'min-h-screen' : 'min-h-[calc(100vh-4rem)]'}>{children}</div>
     </AuthProvider>
   );
 }
